@@ -1,8 +1,9 @@
 name: Build Android APK
 
-# Builds an installable (sideloadable) debug APK and uploads it as a downloadable
-# artifact. No Play Store, no signing setup needed — grab it from the run's
-# "Artifacts" section and install it on the phone.
+# Builds an installable (sideloadable) debug APK and publishes it to a rolling
+# "latest" GitHub Release. No Play Store, no signing setup needed. Download the
+# newest build any time from:
+#   https://github.com/SimonDeDeyn/Imposter/releases/latest/download/imposter.apk
 on:
   push:
     branches: ["main"]
@@ -11,6 +12,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # needed to publish the release
     steps:
       - uses: actions/checkout@v4
 
@@ -45,9 +48,23 @@ jobs:
           chmod +x ./gradlew
           ./gradlew assembleDebug --no-daemon --stacktrace
 
-      - name: Upload APK
+      - name: Rename APK
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk imposter.apk
+
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: imposter-android-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: imposter.apk
           if-no-files-found: error
+
+      - name: Publish to the "latest" release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Replace the single rolling "latest" release so there's always exactly
+          # one, always current, at a stable download URL.
+          gh release delete latest --yes --cleanup-tag 2>/dev/null || true
+          gh release create latest imposter.apk \
+            --title "Imposter — latest Android build" \
+            --notes "Latest APK, built automatically from commit ${{ github.sha }}. Download **imposter.apk** below and sideload it on Android."

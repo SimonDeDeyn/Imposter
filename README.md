@@ -14,6 +14,24 @@ imposters. Say a linked word each round, then vote out whoever sounds off.
 game you can lock to a single category (e.g. *Animals*, *World & Landmarks*, or
 *Historical Figures*) or keep it **random across all** categories.
 
+## 📲 Get the app
+
+You can play three ways — all share the same rooms, so app, iPhone, and web
+players can play together:
+
+- **Android app:** download the latest APK and install it:
+  **➡️ [github.com/SimonDeDeyn/Imposter/releases/latest](https://github.com/SimonDeDeyn/Imposter/releases/latest)**
+  (or the direct link
+  [imposter.apk](https://github.com/SimonDeDeyn/Imposter/releases/latest/download/imposter.apk)).
+  Open it on the phone, allow *install from unknown sources*, and install. A fresh
+  build is published here automatically on every update.
+- **iPhone / any browser:** open the web app and use **Add to Home Screen**
+  (Share button in Safari) to install it like an app.
+
+> **Updating the Android app:** it doesn't auto-update. Grab the latest APK from
+> the link above and reinstall. Because these are debug-signed builds, you may
+> need to uninstall the old one first.
+
 ## Modes
 
 - **One device — pass & play:** add names, pass the phone around for private
