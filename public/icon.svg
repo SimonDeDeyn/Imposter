@@ -1,0 +1,38 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1E1A31"/>
+      <stop offset="1" stop-color="#14121F"/>
+    </linearGradient>
+    <linearGradient id="mask" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFC24B"/>
+      <stop offset="1" stop-color="#F0A81E"/>
+    </linearGradient>
+  </defs>
+  <!-- full-bleed background (maskable-safe: key content stays within center 80%) -->
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <!-- soft purple glow -->
+  <circle cx="256" cy="230" r="150" fill="#B78CFF" opacity="0.14"/>
+  <!-- domino mask -->
+  <g>
+    <path d="M120 208
+             C120 176 150 160 190 162
+             C220 163 240 176 256 176
+             C272 176 292 163 322 162
+             C362 160 392 176 392 208
+             C392 250 360 296 316 296
+             C288 296 272 280 256 280
+             C240 280 224 296 196 296
+             C152 296 120 250 120 208 Z"
+          fill="url(#mask)"/>
+    <!-- eye holes -->
+    <ellipse cx="192" cy="222" rx="30" ry="26" fill="#14121F"/>
+    <ellipse cx="320" cy="222" rx="30" ry="26" fill="#14121F"/>
+    <!-- eye glints -->
+    <circle cx="204" cy="214" r="7" fill="#EFEAFE" opacity="0.9"/>
+    <circle cx="332" cy="214" r="7" fill="#EFEAFE" opacity="0.9"/>
+  </g>
+  <!-- question mark below, hinting "who's the imposter?" -->
+  <text x="256" y="392" font-family="'Bricolage Grotesque','Outfit',system-ui,sans-serif"
+        font-size="120" font-weight="800" fill="#EFEAFE" text-anchor="middle">?</text>
+</svg>
