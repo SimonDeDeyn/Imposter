@@ -9,5 +9,5 @@
        purple glow as the web icon, with the glow centered behind the foreground
        mask (foreground places the mask at ~512,478 at 66% scale) -->
   <rect width="1024" height="1024" fill="url(#bg)"/>
-  <circle cx="512" cy="462" r="248" fill="#B78CFF" opacity="0.14"/>
+  <circle cx="512" cy="473" r="200" fill="#B78CFF" opacity="0.14"/>
 </svg>

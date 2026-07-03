@@ -6,8 +6,8 @@
     </linearGradient>
   </defs>
   <!-- logo only (no background) for the adaptive-icon foreground layer;
-       scaled up to fill more of the icon while staying inside the safe zone -->
-  <g transform="translate(90,86) scale(1.65)">
+       sized so the mask matches the web icon's proportion (~53% of the tile) -->
+  <g transform="translate(172,167) scale(1.33)">
     <path d="M120 208
              C120 176 150 160 190 162
              C220 163 240 176 256 176
