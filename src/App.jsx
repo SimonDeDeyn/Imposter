@@ -171,6 +171,13 @@ function winnerOf(players) {
 const teammatesOf = (players, meId) =>
   players.filter((p) => p.id !== meId && p.role !== "civilian").map((p) => p.name);
 
+// Firebase's Realtime Database omits empty arrays (an empty array reads back as
+// null/undefined). Guests read state from there, so restore the array fields to
+// real arrays before the UI touches them — otherwise `st.players.find(...)` etc.
+// throws on an undefined value and blanks the screen.
+const normalizeState = (s) =>
+  s ? { ...s, players: s.players || [], lobby: s.lobby || [], order: s.order || [] } : s;
+
 /* ---------------- Shared storage helpers (multi-device) ---------------- */
 const K = {
   state: (code) => `imposter:${code}:state`,
@@ -883,7 +890,7 @@ function MultiDevice({ role, goHome }) {
     if (state.phase !== "lobby") { setErr("That game already started. Ask the host for a new room."); setBusyBtn(false); return; }
     meRef.current = { name: myName.trim() };
     await S.set(K.player(c, myId), meRef.current);
-    setCode(c); setSt(state); setStep("game"); setBusyBtn(false);
+    setCode(c); setSt(normalizeState(state)); setStep("game"); setBusyBtn(false);
   };
 
   /* ---------- host loop: aggregate player keys, advance phases ---------- */
@@ -995,7 +1002,7 @@ function MultiDevice({ role, goHome }) {
     const tick = async () => {
       if (stopped) return;
       const state = await S.get(K.state(code));
-      if (state) { setSt(state); stRef.current = state; }
+      if (state) { const ns = normalizeState(state); setSt(ns); stRef.current = ns; }
     };
     const iv = setInterval(tick, 2000);
     tick();
