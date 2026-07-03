@@ -10,9 +10,9 @@ imposters. Say a linked word each round, then vote out whoever sounds off.
 - Civilians win when every imposter is gone. Imposters win when they equal or
   outnumber the civilians.
 
-2000 words across 14 categories, each round picks a fresh pair. Before starting a
-game you can lock to a single category (e.g. *Animals*) or keep it **random across
-all** categories.
+2140 words across 15 categories, each round picks a fresh pair. Before starting a
+game you can lock to a single category (e.g. *Animals* or *World & Landmarks*) or
+keep it **random across all** categories.
 
 ## Modes
 

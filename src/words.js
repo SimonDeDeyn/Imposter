@@ -294,6 +294,26 @@ export const DICT = {
     ["Makeup","Lipstick"],["Mascara","Eyeliner"],["Perfume","Cologne"],["Nail polish","Foundation"],
     ["Blush","Concealer"],["Eyeshadow","Highlighter"],
   ],
+  "World & Landmarks": [
+    ["France","Italy"],["Spain","Portugal"],["Germany","Austria"],["Norway","Sweden"],
+    ["Denmark","Finland"],["Netherlands","Belgium"],["Switzerland","Liechtenstein"],["Greece","Turkey"],
+    ["Poland","Hungary"],["Ireland","Scotland"],["China","Japan"],["South Korea","North Korea"],
+    ["India","Pakistan"],["Thailand","Vietnam"],["Indonesia","Philippines"],["Iran","Iraq"],
+    ["Saudi Arabia","United Arab Emirates"],["Egypt","Morocco"],["Kenya","Tanzania"],["Nigeria","Ghana"],
+    ["South Africa","Zimbabwe"],["Brazil","Argentina"],["Peru","Chile"],["Mexico","Colombia"],
+    ["Cuba","Jamaica"],["Canada","United States"],["Australia","New Zealand"],["Iceland","Greenland"],
+    ["Europe","Asia"],["Africa","South America"],["North America","Australia"],["Antarctica","Arctic"],
+    ["Middle East","Caribbean"],["Paris","London"],["Rome","Athens"],["Berlin","Vienna"],
+    ["Barcelona","Madrid"],["Amsterdam","Brussels"],["Venice","Florence"],["New York","Chicago"],
+    ["Los Angeles","Las Vegas"],["Tokyo","Osaka"],["Seoul","Beijing"],["Bangkok","Singapore"],
+    ["Dubai","Doha"],["Istanbul","Cairo"],["Moscow","Saint Petersburg"],["Sydney","Melbourne"],
+    ["Rio de Janeiro","São Paulo"],["Mumbai","Delhi"],["Eiffel Tower","Big Ben"],["Statue of Liberty","Christ the Redeemer"],
+    ["Great Wall of China","Taj Mahal"],["Pyramids of Giza","Great Sphinx"],["Colosseum","Parthenon"],["Leaning Tower of Pisa","Tower of London"],
+    ["Mount Rushmore","Hollywood Sign"],["Golden Gate Bridge","Brooklyn Bridge"],["Sydney Opera House","Burj Khalifa"],["Stonehenge","Easter Island"],
+    ["Machu Picchu","Chichen Itza"],["Sagrada Familia","Notre-Dame"],["Alps","Himalayas"],["Mount Everest","K2"],
+    ["Sahara Desert","Gobi Desert"],["Amazon Rainforest","Congo Rainforest"],["Niagara Falls","Victoria Falls"],["Grand Canyon","Great Barrier Reef"],
+    ["Pacific Ocean","Atlantic Ocean"],["Mount Fuji","Mount Kilimanjaro"],
+  ],
 };
 
 // Canonical, filterable form: [{ cat, a, b }]
