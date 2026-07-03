@@ -7,7 +7,7 @@
   </defs>
   <!-- logo only (no background) for the adaptive-icon foreground layer;
        sized so the mask matches the web icon's proportion (~53% of the tile) -->
-  <g transform="translate(172,167) scale(1.33)">
+  <g transform="translate(195,187) scale(1.24)">
     <path d="M120 208
              C120 176 150 160 190 162
              C220 163 240 176 256 176
