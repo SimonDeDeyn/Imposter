@@ -231,7 +231,13 @@ function Shell({ children, tone }) {
   return (
     <div className="imp-root min-h-screen w-full flex justify-center" style={{ background: C.bg, color: C.text }}>
       <GlobalStyle />
-      <div className="w-full flex flex-col px-5 py-6 relative" style={{ maxWidth: 460, minHeight: "100vh" }}>
+      <div className="w-full flex flex-col px-5 relative" style={{
+        maxWidth: 460, minHeight: "100vh",
+        // keep the original 1.5rem padding, plus the device safe-area insets so
+        // content clears the status bar / notch (native app) and home indicator
+        paddingTop: "calc(1.5rem + env(safe-area-inset-top))",
+        paddingBottom: "calc(1.5rem + env(safe-area-inset-bottom))",
+      }}>
         <div aria-hidden="true" style={{
           position: "fixed", inset: 0, pointerEvents: "none",
           background: `radial-gradient(600px 340px at 50% -80px, ${glow}, transparent 70%)`,
