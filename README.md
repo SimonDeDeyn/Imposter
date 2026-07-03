@@ -10,7 +10,9 @@ imposters. Say a linked word each round, then vote out whoever sounds off.
 - Civilians win when every imposter is gone. Imposters win when they equal or
   outnumber the civilians.
 
-500 words across 11 categories, each round picks a fresh pair.
+2000 words across 14 categories, each round picks a fresh pair. Before starting a
+game you can lock to a single category (e.g. *Animals*) or keep it **random across
+all** categories.
 
 ## Modes
 
@@ -51,13 +53,17 @@ npm run preview  # preview the production build
 index.html        # entry HTML (loads Tailwind via CDN)
 src/
   main.jsx        # React entry point
-  App.jsx         # the entire game (dictionary, UI, both modes)
+  App.jsx         # the game UI + both modes
+  words.js        # the word dictionary (categories → pairs) + helpers
 vite.config.js    # Vite + React config
 ```
 
-Everything lives in `src/App.jsx`. The word list is the `DICT` object near the
-top — add or edit pairs there. Each pair is `["CivilianWord", "UndercoverWord"]`;
-which one becomes which is randomized each game.
+The word list lives in `src/words.js` as the `DICT` object — categories mapped to
+arrays of pairs. Each pair is `["CivilianWord", "UndercoverWord"]`; which one
+becomes which is randomized each game. Add a category by adding a key; add words
+by adding pairs. Keep each category meaty (~60+ pairs) so it stays varied when
+players lock the game to it. The in-game category picker is built automatically
+from the keys of `DICT`.
 
 ## Cross-device play (real phones)
 

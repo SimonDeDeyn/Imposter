@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { TOTAL_WORDS, CATEGORIES, ALL_CATEGORIES, pairsForCategory } from "./words.js";
 
 /* ================================================================
    IMPOSTER — social deduction party game
@@ -6,101 +7,7 @@ import { useState, useEffect, useRef } from "react";
    (and don't know it), the Spy gets nothing. Talk. Vote. Survive.
    ================================================================ */
 
-/* ---------- Word dictionary: pairs of closely-linked words ---------- */
-const DICT = {
-  "Food & Drink": [
-    ["Coffee","Tea"],["Pizza","Lasagna"],["Hamburger","Hot dog"],["Croissant","Baguette"],
-    ["Sushi","Sashimi"],["Pancake","Waffle"],["Chocolate","Caramel"],["Ice cream","Frozen yogurt"],
-    ["Ketchup","Mayonnaise"],["Butter","Margarine"],["Apple","Pear"],["Banana","Mango"],
-    ["Strawberry","Raspberry"],["Lemonade","Iced tea"],["Beer","Cider"],["Wine","Champagne"],
-    ["Espresso","Cappuccino"],["Cheese","Yogurt"],["Spaghetti","Noodles"],["Taco","Burrito"],
-    ["Donut","Muffin"],["Cookie","Brownie"],["Honey","Jam"],["Soup","Stew"],
-    ["Salad","Coleslaw"],["Rice","Couscous"],["Bread","Toast"],["Milkshake","Smoothie"],
-    ["Popcorn","Nachos"],["French fries","Potato chips"],
-  ],
-  "Animals": [
-    ["Dog","Wolf"],["Cat","Lynx"],["Horse","Donkey"],["Cow","Buffalo"],
-    ["Sheep","Goat"],["Rabbit","Hare"],["Mouse","Rat"],["Lion","Tiger"],
-    ["Leopard","Cheetah"],["Crocodile","Alligator"],["Turtle","Tortoise"],["Frog","Toad"],
-    ["Eagle","Hawk"],["Owl","Bat"],["Penguin","Ostrich"],["Dolphin","Whale"],
-    ["Shark","Orca"],["Octopus","Squid"],["Crab","Lobster"],["Bee","Wasp"],
-    ["Butterfly","Moth"],["Ant","Termite"],["Spider","Scorpion"],["Snake","Eel"],
-    ["Kangaroo","Wallaby"],["Gorilla","Chimpanzee"],["Elephant","Mammoth"],["Hippo","Rhino"],
-    ["Camel","Llama"],["Fox","Coyote"],
-  ],
-  "Places": [
-    ["Beach","Desert"],["Mountain","Volcano"],["Forest","Jungle"],["River","Canal"],
-    ["Lake","Pond"],["Hotel","Hostel"],["Hospital","Pharmacy"],["School","University"],
-    ["Library","Bookstore"],["Museum","Art gallery"],["Cinema","Theater"],["Airport","Train station"],
-    ["Supermarket","Farmers market"],["Restaurant","Food truck"],["Church","Temple"],["Castle","Palace"],
-    ["Prison","Courthouse"],["Gym","Yoga studio"],["Park","Playground"],["Zoo","Aquarium"],
-    ["Farm","Ranch"],["Island","Peninsula"],["Cave","Tunnel"],["Bridge","Dam"],
-    ["Lighthouse","Windmill"],
-  ],
-  "Jobs": [
-    ["Doctor","Nurse"],["Teacher","Professor"],["Chef","Baker"],["Pilot","Flight attendant"],
-    ["Police officer","Security guard"],["Firefighter","Paramedic"],["Lawyer","Judge"],["Actor","Stuntman"],
-    ["Singer","Rapper"],["Painter","Sculptor"],["Plumber","Electrician"],["Carpenter","Blacksmith"],
-    ["Farmer","Fisherman"],["Dentist","Optician"],["Barber","Hairdresser"],["Journalist","Photographer"],
-    ["Astronaut","Scientist"],["Soldier","Sailor"],["Waiter","Bartender"],["Architect","Engineer"],
-    ["Programmer","Graphic designer"],["Mailman","Delivery driver"],["Veterinarian","Zookeeper"],["Magician","Clown"],
-    ["Detective","Spy"],
-  ],
-  "Sports & Games": [
-    ["Football","Rugby"],["Basketball","Volleyball"],["Tennis","Badminton"],["Table tennis","Padel"],
-    ["Golf","Mini golf"],["Boxing","Wrestling"],["Karate","Judo"],["Swimming","Diving"],
-    ["Surfing","Windsurfing"],["Skiing","Snowboarding"],["Ice skating","Rollerblading"],["Marathon","Sprint"],
-    ["Chess","Checkers"],["Poker","Blackjack"],["Darts","Archery"],["Bowling","Petanque"],
-    ["Monopoly","Risk"],["Hide and seek","Tag"],["Jenga","Dominoes"],["Sudoku","Crossword"],
-    ["Skateboarding","BMX"],["Fishing","Hunting"],["Rock climbing","Bouldering"],["Gymnastics","Acrobatics"],
-    ["Cycling","Spinning"],
-  ],
-  "Fantasy & Fiction": [
-    ["Superhero","Villain"],["Vampire","Zombie"],["Ghost","Skeleton"],["Witch","Wizard"],
-    ["Dragon","Dinosaur"],["Unicorn","Pegasus"],["Mermaid","Siren"],["Pirate","Viking"],
-    ["Knight","Samurai"],["Robot","Cyborg"],["Alien","Monster"],["Fairy","Elf"],
-    ["Giant","Ogre"],["Santa Claus","Tooth fairy"],["Werewolf","Bigfoot"],["Genie","Leprechaun"],
-    ["Mummy","Frankenstein"],["Angel","Cupid"],["Time machine","Teleporter"],["Treasure map","Crystal ball"],
-  ],
-  "Objects & Home": [
-    ["Chair","Stool"],["Sofa","Armchair"],["Table","Desk"],["Bed","Hammock"],
-    ["Pillow","Cushion"],["Blanket","Duvet"],["Lamp","Candle"],["Mirror","Window"],
-    ["Clock","Watch"],["Umbrella","Raincoat"],["Backpack","Suitcase"],["Wallet","Handbag"],
-    ["Glasses","Sunglasses"],["Hat","Cap"],["Scarf","Tie"],["Gloves","Mittens"],
-    ["Sneakers","Boots"],["Toothbrush","Toothpaste"],["Soap","Shampoo"],["Towel","Bathrobe"],
-    ["Fork","Spoon"],["Knife","Scissors"],["Mug","Glass"],["Plate","Bowl"],
-    ["Kettle","Teapot"],["Fridge","Freezer"],["Oven","Microwave"],["Washing machine","Dishwasher"],
-    ["Vacuum cleaner","Broom"],["Ladder","Stairs"],
-  ],
-  "Technology": [
-    ["Smartphone","Tablet"],["Laptop","Desktop computer"],["Keyboard","Computer mouse"],["Headphones","Earbuds"],
-    ["Television","Projector"],["Camera","Webcam"],["Drone","Satellite"],["USB stick","Hard drive"],
-    ["Wi-Fi","Bluetooth"],["Email","Text message"],["Calculator","Abacus"],["Battery","Power bank"],
-    ["Smartwatch","Fitness tracker"],["GPS","Compass"],["Password","Fingerprint"],
-  ],
-  "Nature & Weather": [
-    ["Sun","Moon"],["Star","Planet"],["Rain","Drizzle"],["Snow","Hail"],
-    ["Thunder","Lightning"],["Rainbow","Northern lights"],["Cloud","Fog"],["Tornado","Hurricane"],
-    ["Earthquake","Avalanche"],["Rose","Tulip"],["Tree","Bush"],["Grass","Moss"],
-    ["Leaf","Petal"],["Cactus","Palm tree"],["Mushroom","Truffle"],["Wave","Tide"],
-    ["Sand","Mud"],["Ice","Frost"],["Sunrise","Sunset"],["Meteor","Comet"],
-  ],
-  "Transport & Travel": [
-    ["Car","Taxi"],["Bus","Tram"],["Train","Metro"],["Bicycle","Scooter"],
-    ["Motorcycle","Moped"],["Truck","Van"],["Airplane","Helicopter"],["Hot air balloon","Zeppelin"],
-    ["Rowboat","Canoe"],["Cruise ship","Yacht"],["Rocket","Spaceship"],["Ambulance","Fire truck"],
-    ["Tractor","Bulldozer"],["Traffic light","Stop sign"],["Passport","Boarding pass"],
-  ],
-  "Everyday Life": [
-    ["Birthday","Wedding"],["Christmas","New Year's Eve"],["Halloween","April Fools"],["Summer","Spring"],
-    ["Winter","Autumn"],["Breakfast","Brunch"],["Homework","Exam"],["Newspaper","Magazine"],
-    ["Comic book","Novel"],["Cash","Credit card"],["Piggy bank","Safe"],["Lottery","Casino"],
-    ["Gift","Souvenir"],["Fireworks","Sparkler"],["Dream","Nightmare"],
-  ],
-};
-
-const ALL_PAIRS = Object.entries(DICT).flatMap(([cat, arr]) => arr.map(([a, b]) => ({ cat, a, b })));
-const TOTAL_WORDS = ALL_PAIRS.length * 2;
+/* Word list, categories & helpers live in ./words.js */
 
 /* ---------------- Theme ---------------- */
 const C = {
@@ -132,8 +39,9 @@ const roomCode = () => {
 };
 
 function buildGame(names, settings) {
-  // names: [{id, name}] ; settings: {uc, spies, revealTeam}
-  const pair = ALL_PAIRS[Math.floor(Math.random() * ALL_PAIRS.length)];
+  // names: [{id, name}] ; settings: {uc, spies, revealTeam, category}
+  const pool = pairsForCategory(settings.category);
+  const pair = pool[Math.floor(Math.random() * pool.length)];
   const flip = Math.random() < 0.5;
   const civWord = flip ? pair.a : pair.b;
   const ucWord = flip ? pair.b : pair.a;
@@ -420,6 +328,37 @@ function Toggle({ label, hint, value, setValue }) {
   );
 }
 
+/* Category picker — pick one theme or keep it random across all */
+function CategoryPicker({ value, onChange }) {
+  const current = value || ALL_CATEGORIES;
+  const opts = [ALL_CATEGORIES, ...CATEGORIES];
+  return (
+    <div className="rounded-2xl px-4 py-3" style={{ background: C.surface, border: `1.5px solid ${C.line}` }}>
+      <div className="font-semibold" style={{ fontSize: 15 }}>Word category</div>
+      <div style={{ color: C.dim, fontSize: 12, marginTop: 2, marginBottom: 10 }}>
+        Keep it random across everything, or lock the game to one theme.
+      </div>
+      <div className="flex gap-2 flex-wrap">
+        {opts.map((c) => {
+          const active = current === c;
+          const label = c === ALL_CATEGORIES ? "🎲 Random (all)" : c;
+          return (
+            <button key={c} type="button" className="imp-btn rounded-full" onClick={() => onChange(c)}
+              style={{
+                padding: "8px 12px", fontSize: 13, fontWeight: 700, cursor: "pointer",
+                background: active ? C.amber : C.surface2,
+                border: `1.5px solid ${active ? C.amber : C.line}`,
+                color: active ? C.amberDark : C.text,
+              }}>
+              {label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 /* Settings panel — shared by both modes */
 function SettingsPanel({ settings, setSettings, playerCount }) {
   const imposters = settings.uc + settings.spies;
@@ -448,6 +387,8 @@ function SettingsPanel({ settings, setSettings, playerCount }) {
             : "Civilians must outnumber imposters at the start."}
         </div>
       )}
+      <CategoryPicker value={settings.category}
+        onChange={(c) => setSettings({ ...settings, category: c })} />
     </div>
   );
 }
@@ -523,7 +464,7 @@ function SingleDevice({ goHome }) {
   const [step, setStep] = useState("names"); // names | settings | reveal | mayor | play | eliminate | result | gameover
   const [names, setNames] = useState([]);
   const [input, setInput] = useState("");
-  const [settings, setSettings] = useState({ uc: 1, spies: 1, revealTeam: false });
+  const [settings, setSettings] = useState({ uc: 1, spies: 1, revealTeam: false, category: ALL_CATEGORIES });
   const [game, setGame] = useState(null);
   const [revealIdx, setRevealIdx] = useState(0);
   const [passReady, setPassReady] = useState(false);
@@ -843,7 +784,7 @@ function MultiDevice({ role, goHome }) {
   const [step, setStep] = useState("setup"); // setup | joining | game | error
   const [myName, setMyName] = useState("");
   const [codeInput, setCodeInput] = useState("");
-  const [settings, setSettings] = useState({ uc: 1, spies: 1, revealTeam: false });
+  const [settings, setSettings] = useState({ uc: 1, spies: 1, revealTeam: false, category: ALL_CATEGORIES });
   const [code, setCode] = useState(null);
   const [myId] = useState(uid());
   const [st, setSt] = useState(null);
