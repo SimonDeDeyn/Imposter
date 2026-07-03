@@ -1340,7 +1340,7 @@ function Home({ onPick }) {
         <div style={{ color: C.dim, fontSize: 15 }}>One word. One liar. Zero mercy.</div>
         <div className="flex gap-2 pt-1">
           <Pill color={C.amber}>{TOTAL_WORDS} words</Pill>
-          <Pill color={C.purple}>{Object.keys(DICT).length} categories</Pill>
+          <Pill color={C.purple}>{CATEGORIES.length} categories</Pill>
         </div>
       </div>
 
