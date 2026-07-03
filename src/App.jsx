@@ -177,9 +177,59 @@ const K = {
   player: (code, id) => `imposter:${code}:p:${id}`,
   prefix: (code) => `imposter:${code}:p:`,
 };
-const S = {
-  // localStorage-backed store. Works across tabs/windows on the SAME browser.
-  // For real cross-device play you'd swap this for a tiny backend (see README).
+// Firebase Realtime Database URL, e.g. https://xxxx-default-rtdb.firebaseio.com
+// Set VITE_FIREBASE_DB_URL in a .env file (local) and in your host's env vars
+// (Vercel → Project → Settings → Environment Variables).
+// When present, rooms sync across REAL devices. When absent, we fall back to
+// localStorage (same-browser only) so local dev works with zero config.
+const DB_URL = (import.meta.env.VITE_FIREBASE_DB_URL || "").replace(/\/+$/, "");
+const REMOTE = !!DB_URL;
+
+// Our keys are colon-delimited; Firebase wants path segments. Map between them:
+//   imposter:CODE:state -> imposter/CODE/state
+//   imposter:CODE:p:ID  -> imposter/CODE/p/ID
+const toPath = (key) => key.replace(/:/g, "/");
+const dbUrl = (key) => `${DB_URL}/${toPath(key)}.json`;
+
+// Remote store: Firebase Realtime Database over its plain REST API (no SDK).
+// Same get/set/del/list contract as the local store, so nothing else changes.
+const RemoteStore = {
+  async get(k) {
+    try {
+      const r = await fetch(dbUrl(k));
+      if (!r.ok) return null;
+      const v = await r.json();
+      return v ?? null;
+    } catch { return null; }
+  },
+  async set(k, v) {
+    try {
+      const r = await fetch(dbUrl(k), { method: "PUT", body: JSON.stringify(v) });
+      return r.ok;
+    } catch { return false; }
+  },
+  async del(k) {
+    try {
+      const r = await fetch(dbUrl(k), { method: "DELETE" });
+      return r.ok;
+    } catch { return false; }
+  },
+  async list(prefix) {
+    // prefix "imposter:CODE:p:" -> list child keys under imposter/CODE/p
+    const parent = toPath(prefix).replace(/\/+$/, "");
+    try {
+      const r = await fetch(`${DB_URL}/${parent}.json?shallow=true`);
+      if (!r.ok) return [];
+      const obj = await r.json();
+      if (!obj) return [];
+      return Object.keys(obj).map((id) => `${prefix}${id}`);
+    } catch { return []; }
+  },
+};
+
+// Local store: localStorage-backed. Works across tabs/windows on the SAME
+// browser only — used automatically when no Firebase URL is configured.
+const LocalStore = {
   _read() {
     try { return JSON.parse(localStorage.getItem("imposter:store") || "{}"); }
     catch { return {}; }
@@ -200,7 +250,11 @@ const S = {
     return Object.keys(o).filter((k) => k.startsWith(prefix));
   },
 };
+
+const S = REMOTE ? RemoteStore : LocalStore;
+
 const storageAvailable = () => {
+  if (REMOTE) return true;
   try {
     localStorage.setItem("imposter:test", "1");
     localStorage.removeItem("imposter:test");
