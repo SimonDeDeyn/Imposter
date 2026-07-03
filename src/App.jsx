@@ -33,6 +33,29 @@ const shuffle = (arr) => {
   return a;
 };
 const uid = () => Math.random().toString(36).slice(2, 9);
+
+/* Persist a piece of state to sessionStorage so an accidental page refresh
+   restores it. sessionStorage survives a reload in the same tab, but clears
+   when the app/tab is closed — so you won't be dropped back into a dead room
+   on a fresh open, and separate tabs stay independent. */
+function useSessionState(key, initial) {
+  const [v, setV] = useState(() => {
+    try { const raw = sessionStorage.getItem(key); if (raw != null) return JSON.parse(raw); } catch {}
+    return typeof initial === "function" ? initial() : initial;
+  });
+  useEffect(() => {
+    try { sessionStorage.setItem(key, JSON.stringify(v)); } catch {}
+  }, [key, v]);
+  return [v, setV];
+}
+// Wipe the in-progress game when returning to the menu (identity + view kept).
+const clearGameSession = () => {
+  try {
+    ["imp:mp:step", "imp:mp:code", "imp:mp:name",
+     "imp:sd:step", "imp:sd:names", "imp:sd:settings", "imp:sd:game",
+     "imp:sd:revealIdx", "imp:sd:pick", "imp:sd:result"].forEach((k) => sessionStorage.removeItem(k));
+  } catch {}
+};
 const roomCode = () => {
   const L = "ABCDEFGHJKLMNPQRSTUVWXYZ";
   return Array.from({ length: 4 }, () => L[Math.floor(Math.random() * L.length)]).join("");
@@ -461,15 +484,15 @@ function RevealCard({ player, revealTeam, players, onDone, doneLabel }) {
    SINGLE DEVICE MODE
    ================================================================ */
 function SingleDevice({ goHome }) {
-  const [step, setStep] = useState("names"); // names | settings | reveal | mayor | play | eliminate | result | gameover
-  const [names, setNames] = useState([]);
+  const [step, setStep] = useSessionState("imp:sd:step", "names"); // names | settings | reveal | mayor | play | eliminate | result | gameover
+  const [names, setNames] = useSessionState("imp:sd:names", []);
   const [input, setInput] = useState("");
-  const [settings, setSettings] = useState({ uc: 1, spies: 1, revealTeam: false, category: ALL_CATEGORIES });
-  const [game, setGame] = useState(null);
-  const [revealIdx, setRevealIdx] = useState(0);
+  const [settings, setSettings] = useSessionState("imp:sd:settings", { uc: 1, spies: 1, revealTeam: false, category: ALL_CATEGORIES });
+  const [game, setGame] = useSessionState("imp:sd:game", null);
+  const [revealIdx, setRevealIdx] = useSessionState("imp:sd:revealIdx", 0);
   const [passReady, setPassReady] = useState(false);
-  const [pick, setPick] = useState(null);
-  const [result, setResult] = useState(null);
+  const [pick, setPick] = useSessionState("imp:sd:pick", null);
+  const [result, setResult] = useSessionState("imp:sd:result", null);
 
   const addName = () => {
     const n = input.trim();
@@ -781,12 +804,12 @@ function SingleDevice({ goHome }) {
    ================================================================ */
 function MultiDevice({ role, goHome }) {
   // role: "host" | "join"
-  const [step, setStep] = useState("setup"); // setup | joining | game | error
-  const [myName, setMyName] = useState("");
+  const [step, setStep] = useSessionState("imp:mp:step", "setup"); // setup | joining | game | error
+  const [myName, setMyName] = useSessionState("imp:mp:name", "");
   const [codeInput, setCodeInput] = useState("");
   const [settings, setSettings] = useState({ uc: 1, spies: 1, revealTeam: false, category: ALL_CATEGORIES });
-  const [code, setCode] = useState(null);
-  const [myId] = useState(uid());
+  const [code, setCode] = useSessionState("imp:mp:code", null);
+  const [myId] = useSessionState("imp:mp:id", uid);
   const [st, setSt] = useState(null);
   const [err, setErr] = useState("");
   const [busyBtn, setBusyBtn] = useState(false);
@@ -796,6 +819,26 @@ function MultiDevice({ role, goHome }) {
   const lockRef = useRef(false);
 
   const isHost = role === "host";
+
+  /* Restore after an accidental refresh. The room lives in Firebase, so if we
+     reload straight into a game, refetch its state and rejoin as the same
+     player (myId is kept in sessionStorage). Runs once on mount. */
+  useEffect(() => {
+    if (step !== "game" || !code || stRef.current) return;
+    let cancelled = false;
+    (async () => {
+      const state = await S.get(K.state(code));
+      if (cancelled) return;
+      if (!state) { goHome(); return; } // room no longer exists
+      const ns = normalizeState(state);
+      stRef.current = ns;
+      setSt(ns);
+      const me = await S.get(K.player(code, myId));
+      if (!cancelled && me) meRef.current = me;
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const writeMe = async (patch) => {
     meRef.current = { ...meRef.current, ...patch };
@@ -1380,8 +1423,9 @@ function Home({ onPick }) {
 }
 
 export default function App() {
-  const [view, setView] = useState("home"); // home | sd | host | join
+  const [view, setView] = useSessionState("imp:view", "home"); // home | sd | host | join
   const goHome = () => setView("home");
+  useEffect(() => { if (view === "home") clearGameSession(); }, [view]);
   if (view === "sd") return <SingleDevice goHome={goHome} />;
   if (view === "host") return <MultiDevice role="host" goHome={goHome} />;
   if (view === "join") return <MultiDevice role="join" goHome={goHome} />;
