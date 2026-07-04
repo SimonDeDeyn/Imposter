@@ -1,0 +1,38 @@
+{
+  "rules": {
+    "imposter": {
+      "$code": {
+        // Only real room codes (4 uppercase letters) are readable/writable.
+        // This stops writes to arbitrary paths and bounds the namespace.
+        ".read": "$code.matches(/^[A-Z]{4}$/)",
+        ".write": "$code.matches(/^[A-Z]{4}$/)",
+
+        // The host-authored game state. Must at least have a code + phase; the
+        // rest of the shape is left flexible so the game can evolve.
+        "state": {
+          ".validate": "newData.hasChildren(['code','phase']) && newData.child('code').isString() && newData.child('code').val().length <= 4 && newData.child('phase').isString() && newData.child('phase').val().length <= 16"
+        },
+
+        // Per-player payloads: { name, ready?, vote? }. Cap string lengths so a
+        // player field can't be used to flood the database.
+        "p": {
+          "$id": {
+            ".validate": "$id.matches(/^[a-z0-9]{1,16}$/) && newData.hasChild('name')",
+            "name":   { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 24" },
+            "ready":  { ".validate": "newData.isString() && newData.val().length <= 40" },
+            "joined": { ".validate": "newData.isNumber()" },
+            "vote": {
+              "t":      { ".validate": "newData.isString() && newData.val().length <= 40" },
+              "target": { ".validate": "newData.isString() && newData.val().length <= 16" },
+              "$other": { ".validate": false }
+            },
+            "$other": { ".validate": false }
+          }
+        },
+
+        // Reject any unexpected keys under a room (only "state" and "p" allowed).
+        "$other": { ".validate": false }
+      }
+    }
+  }
+}

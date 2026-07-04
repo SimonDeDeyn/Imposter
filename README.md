@@ -106,21 +106,21 @@ picks automatically:
    and add the same `VITE_FIREBASE_DB_URL` variable in your host's dashboard
    (Vercel → Settings → Environment Variables), then redeploy.
 
-Suggested security rules (scopes read/write to game rooms only):
+### Security rules
 
-```json
-{
-  "rules": {
-    "imposter": {
-      "$code": { ".read": true, ".write": true }
-    }
-  }
-}
-```
+Use the hardened rules in [firebase.rules.json](firebase.rules.json) rather than
+leaving the database in open "test mode". Paste them into the Firebase console →
+**Realtime Database → Rules → Publish**. They:
+
+- restrict reads/writes to valid room codes (`[A-Z]{4}`) only — no writes to
+  arbitrary paths;
+- cap player-name and field lengths so a field can't be used to flood the DB;
+- reject any unexpected keys.
 
 > Rooms are ephemeral and hold no personal data beyond first names. The host
 > deletes the room on close; abandoned rooms can be cleared manually in the
-> Firebase console.
+> Firebase console. Keep the project on the free **Spark** plan (no billing) so
+> usage is capped and can never generate a charge.
 
 ## License
 
