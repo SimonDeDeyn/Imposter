@@ -400,19 +400,19 @@ function SettingsPanel({ settings, setSettings, playerCount }) {
       <Stepper label="Undercovers" hint="Get a near-miss word, don't know it"
         value={settings.uc} setValue={(v) => setSettings({ ...settings, uc: v })} min={0} max={5} />
       <Toggle label="Imposters see their teammates"
-        hint="Undercovers & spies see who's on their side. Note: this tells Undercovers they are Undercover."
+        hint="Undercovers & Spies see who's on their side. Note: this tells Undercovers they are Undercover."
         value={settings.revealTeam} setValue={(v) => setSettings({ ...settings, revealTeam: v })} />
       <div className="flex gap-2 flex-wrap items-center rounded-2xl px-4 py-3" style={{ background: C.surface, border: `1.5px solid ${C.line}` }}>
-        <Pill color={C.sky}>{Math.max(civilians, 0)} civilian{civilians === 1 ? "" : "s"}</Pill>
-        {settings.uc > 0 && <Pill color={C.purple}>{settings.uc} undercover</Pill>}
-        {settings.spies > 0 && <Pill color={C.coral}>{settings.spies} spy</Pill>}
+        <Pill color={C.sky}>{Math.max(civilians, 0)} Civilian{civilians === 1 ? "" : "s"}</Pill>
+        {settings.uc > 0 && <Pill color={C.purple}>{settings.uc} Undercover</Pill>}
+        {settings.spies > 0 && <Pill color={C.coral}>{settings.spies} Spy</Pill>}
       </div>
       {!valid && (
         <div className="rounded-2xl px-4 py-3" style={{ background: "rgba(255,90,110,.1)", border: `1.5px solid ${C.coral}`, color: C.coral, fontSize: 13 }}>
           {playerCount < 3
             ? "You need at least 3 players."
             : imposters < 1
-            ? "Add at least 1 undercover or spy."
+            ? "Add at least 1 Undercover or Spy."
             : "Civilians must outnumber imposters at the start."}
         </div>
       )}
@@ -1412,12 +1412,12 @@ function Home({ onPick }) {
       {showRules && (
         <div className="imp-pop rounded-2xl px-4 py-4 mt-3 flex flex-col gap-3" style={{ background: C.surface, border: `1.5px solid ${C.line}`, fontSize: 14, lineHeight: 1.5 }}>
           <div><Pill color={C.sky}>Civilians</Pill><div style={{ marginTop: 4 }}>All get the same secret word.</div></div>
-          <div><Pill color={C.purple}>Undercovers</Pill><div style={{ marginTop: 4 }}>Get a slightly different word — and have no idea they're not civilians.</div></div>
+          <div><Pill color={C.purple}>Undercovers</Pill><div style={{ marginTop: 4 }}>Get a slightly different word — and have no idea they're not Civilians.</div></div>
           <div><Pill color={C.coral}>Spy</Pill><div style={{ marginTop: 4 }}>Gets no word at all and must bluff.</div></div>
           <div style={{ color: C.dim }}>
             Each round, everyone says one word linked to their word. Then vote out whoever sounds off.
             The Mayor ⚖️ breaks ties. Civilians win when all imposters are gone; imposters win when they
-            equal or outnumber the civilians.
+            equal or outnumber the Civilians.
           </div>
         </div>
       )}
