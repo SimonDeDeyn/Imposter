@@ -26,6 +26,11 @@ jobs:
         run: npm ci
 
       - name: Build web app
+        # The Firebase Realtime Database URL is public (it ships in every client
+        # build), so it's fine here. It must be present or the APK falls back to
+        # localStorage-only mode and cross-phone multiplayer won't work.
+        env:
+          VITE_FIREBASE_DB_URL: https://imposter-95bc0-default-rtdb.europe-west1.firebasedatabase.app
         run: npm run build
 
       - uses: actions/setup-java@v4
