@@ -579,6 +579,7 @@ function SingleDevice({ goHome }) {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && addName()}
             placeholder="Player name"
+            maxLength={24}
             style={{ background: C.surface, border: `1.5px solid ${C.line}`, color: C.text, fontSize: 16, height: 52 }}
           />
           <Btn onClick={addName} small style={{ width: 80, height: 52 }}>Add</Btn>
@@ -1052,7 +1053,7 @@ function MultiDevice({ role, goHome }) {
           )}
           <input className="imp-input rounded-2xl px-4"
             value={myName} onChange={(e) => setMyName(e.target.value)}
-            placeholder="Your name"
+            placeholder="Your name" maxLength={24}
             style={{ background: C.surface, border: `1.5px solid ${C.line}`, color: C.text, fontSize: 16, height: 52 }} />
           {isHost && (
             <>
