@@ -795,7 +795,7 @@ function SingleDevice({ goHome }) {
             ))}
           </div>
           <div className="w-full flex flex-col gap-2 pt-2 pb-4">
-            <Btn onClick={startGame}>Play again — same crew</Btn>
+            <Btn onClick={() => setStep("settings")}>Play again — same crew</Btn>
             <Btn variant="ghost" onClick={goHome}>Back to menu</Btn>
           </div>
         </div>
